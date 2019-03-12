@@ -92,4 +92,25 @@ app.post("/adicionar-usuario", function (req, res) {
     );
 });
 
+app.get("/exibir-usuarios", function (req, res) {
+    connection.query("SELECT * FROM usuarios", function (err, rows, fields) {
+        if (err) throw err;
+        res.send(rows);
+    });
+});
+
+app.post("/exibir-usuario", function (req, res) {
+    var id = req.body.id;
+    connection.query("SELECT * FROM usuarios WHERE id = '" + id + "'", function (err, row, field) {
+        if (err) {
+            throw err
+            res.send('ERRO')
+        } else {
+            res.send(row)
+        }
+        console.log(row)
+    })
+
+});
+
 app.listen(port, () => console.log(`Servidor rodando na porta ${port}`));
