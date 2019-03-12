@@ -1,8 +1,8 @@
-const express = require("express");
-var mysql = require("mysql");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const uuid = require("uuid");
+const express = require('express');
+var mysql = require('mysql');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const uuid = require('uuid');
 
 const app = express();
 const port = 3001;
@@ -25,13 +25,71 @@ var connection = mysql.createConnection({
     host: host,
     user: user,
     password: password,
-    database: "testes"
+    database: 'testes'
 });
 
 connection.connect();
 
-app.get("/", function (req, res) {
-    res.send("Hello Word");
+app.get('/', function (req, res) {
+    res.send('Hello Word');
 })
+
+app.post("/login", function (req, res) {
+    var email = req.body.email;
+    var senha = req.body.senha;
+
+    connection.query(
+        "SELECT * FROM usuarios WHERE email = '" + email + "'",
+        function (err, rows, fields) {
+            if (err) {
+                throw err;
+                res.send(err)
+            }
+            console.log(rows);
+
+            res.send(rows)
+        }
+    );
+
+});
+
+app.post("/adicionar-usuario", function (req, res) {
+    var id = uuid();
+    var nome = req.body.nome;
+    var email = req.body.email;
+    var senha = req.body.senha;
+    var data_nascimento = req.body.data_nascimento;
+    var instituicao = req.body.instituicao;
+    var profissao = req.body.profissao;
+
+    connection.query(
+        "INSERT INTO `usuarios`(`id`,  `nome`,`email`, `senha`, `data_nascimento`, `instituicao`, `profissao`) VALUES ('" +
+        id +
+        "','" +
+        nome +
+        "','" +
+        email +
+        "','" +
+        senha +
+        "','" +
+        data_nascimento +
+        "','" +
+        instituicao +
+        "','" +
+        profissao +
+        "')",
+        function (err, result) {
+            if (err) throw err;
+            console.log([{
+                id: id,
+                nome: nome,
+                email: email,
+                senha: senha,
+                data_nascimento: data_nascimento
+            }]);
+            res.send("Dado adicionado com sucesso");
+        }
+    );
+});
 
 app.listen(port, () => console.log(`Servidor rodando na porta ${port}`));
