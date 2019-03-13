@@ -93,7 +93,7 @@ app.post("/adicionar-usuario", function (req, res) {
 });
 
 app.get("/exibir-usuarios", function (req, res) {
-    connection.query("SELECT * FROM usuarios", function (err, rows, fields) {
+    connection.query("SELECT * FROM usuarios ORDER BY nome", function (err, rows, fields) {
         if (err) throw err;
         res.send(rows);
     });
@@ -111,6 +111,31 @@ app.post("/exibir-usuario", function (req, res) {
         console.log(row)
     })
 
+});
+
+app.put("/editar-usuario", function (req, res) {
+    var id = req.body.id;
+    var nome = req.body.nome;
+    var email = req.body.email;
+    var senha = req.body.senha;
+    var data_nascimento = req.body.data_nascimento;
+    var instituicao = req.body.instituicao;
+    var profissao = req.body.profissao;
+
+    connection.query(
+        "UPDATE `usuarios` SET id='" + id + "',  nome='" + nome + "',email='" + email + "', senha='" + senha + "', data_nascimento='" + data_nascimento + "', instituicao='" + instituicao + "', profissao='" + profissao + "' where id = '" + id + "' ",
+        function (err, result) {
+            if (err) throw err;
+            console.log([{
+                id: id,
+                nome: nome,
+                email: email,
+                senha: senha,
+                data_nascimento: data_nascimento
+            }]);
+            res.send("Dado alterado com sucesso");
+        }
+    );
 });
 
 app.listen(port, () => console.log(`Servidor rodando na porta ${port}`));
